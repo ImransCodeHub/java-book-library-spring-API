@@ -2,6 +2,8 @@ package com.example.java3projectspringapi;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -133,17 +135,32 @@ public class MainController {
         return "Author not found";
     }
 
-    /**
-     * Delete Request - Delete Author
-     * @param author_id
-     * @return Deleted if successful, Author not found if not
-     */
+//    /**
+//     * Delete Request - Delete Author
+//     * @param author_id
+//     * @return Deleted if successful, Author not found if not
+//     */
+//    @DeleteMapping(path = AUTHORS+"/{author_id}")
+//    @CrossOrigin(origins = "*")
+//    public @ResponseBody
+//    String deleteAuthor(@PathVariable Integer author_id){
+//        Optional<Author> author = authorRepository.findById(author_id);
+//        if(author.isPresent()){
+//            authorRepository.delete(author.get());
+//            return "Author Deleted";
+//        }
+//        return "Author not found";
+//    }
+
     @DeleteMapping(path = AUTHORS+"/{author_id}")
     @CrossOrigin(origins = "*")
     public @ResponseBody
-    String deleteAuthor(@PathVariable Integer author_id){
+    String deleteAuthor(@PathVariable Integer author_id) {
         Optional<Author> author = authorRepository.findById(author_id);
         if(author.isPresent()){
+            List<Book> bookList = bookRepository.findBookByAuthorListContaining(author.get());
+            bookList.forEach(book ->
+                    book.getAuthorList().remove(author.get()));
             authorRepository.delete(author.get());
             return "Author Deleted";
         }
